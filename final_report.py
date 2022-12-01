@@ -20,18 +20,18 @@ lasttime=0
 first=0
 
 def get_packet():
-        #cài windump vào máy và chạy file filesss pcap (là file đã thu thập được khi brute force)
-        command = "WinDump.exe -i 6 -n -c 1000 -w filess.pcap"
+        #cài windump vào máy và chạy file files pcap (là file đã thu thập được khi brute force)
+        command = "WinDump.exe -i 6 -n -c 1000 -w file.pcap"
         subprocess.call(command)
 def rm_packet():
-        command = "filess.pcap"
+        command = "file.pcap"
         subprocess.call(command)
 
 
 
 def save_csv():
         fieldnames = ['No', 'Times','Timesstamp', 'Source','Destination','Message']
-        capture = pyshark.FileCapture('filess.pcap')
+        capture = pyshark.FileCapture('file.pcap')
         capture.load_packets()
         capture.reset()
         with open('filecapture.csv', 'w') as csv_file:
@@ -43,7 +43,7 @@ def save_csv():
                         if 'tcp' in item:
                                 writer.writerow([item.number,item.sniff_time,item.sniff_timestamp,item.ip.src_host,item.ip.dst_host,str(item.tcp).encode()])
 
-def detect_ftp_bruteforce(item):
+def detect_cve(item):
         global lasttime,counter
         if 'Login incorrect' in item[5]:
                 #print (float(item.sniff_timestamp)-lasttime)
@@ -52,7 +52,7 @@ def detect_ftp_bruteforce(item):
                         counter+=1
                 if counter > 4:
                         print ('==============^===============')
-                        print ('Phát hiện tấn công Brute force')
+                        print ('Phát hiện tấn công cve 2020-0199')
                         print ('Thời gian : '+item[1])
                         print ('IP src: '+item[3])
                         print ('IP des: '+item[4])
@@ -70,7 +70,7 @@ def read_csv():
                         if first==0:
                                 lasttime=float(row[2])
                                 first=1
-                        detect_ftp_bruteforce(row)
+                        detect_cve(row)
             print(f'Processed {line_count} lines.')
 
 

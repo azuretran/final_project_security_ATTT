@@ -21,7 +21,8 @@ with open("output.csv", "w") as f:
             ip_dst=pkt[IP].dst
         if TCP in pkt:
             tcp_dport=pkt[TCP].dport
-            x=pkt[TCP].window
+            x=pkt[TCP].options
+            
             csv_header = "IP_src,\tIP_drc,dst_port\n"
 
             s = ""
